@@ -5,19 +5,30 @@ module.exports = {
   //
   getAllMovie: async (request, response) => {
     try {
-      let { page, limit } = request.query;
-      page = +page;
-      limit = +limit;
+      let { page, limit, sort, searchName } = request.query;
+
+      page = +page || 1;
+      limit = +limit || 5;
+      sort = sort || "name ASC";
+      searchName = searchName || "";
+
       const offset = page * limit - limit;
       const totalData = await movieModel.getCountMovie();
       const totalPage = Math.ceil(totalData / limit);
+
       const pageInfo = {
         page,
         totalPage,
         limit,
         totalData,
       };
-      const result = await movieModel.getAllMovie(limit, offset);
+
+      const result = await movieModel.getAllMovie(
+        limit,
+        offset,
+        sort,
+        searchName
+      );
       return helperWrapper.response(
         response,
         200,
@@ -26,6 +37,7 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -111,6 +123,13 @@ module.exports = {
         synopsis,
         updatedAt: new Date(Date.now()),
       };
+
+      Object.keys(setData).forEach((value) => {
+        if (!setData[value]) {
+          delete setData[value];
+        }
+      });
+
       const result = await movieModel.updateMovie(id, setData);
       return helperWrapper.response(
         response,

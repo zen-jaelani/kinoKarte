@@ -5,9 +5,14 @@ module.exports = {
   //
   getAllSchedule: async (request, response) => {
     try {
-      let { page, limit } = request.query;
-      page = +page;
-      limit = +limit;
+      let { page, limit, sort, searchMovieId, searchLocation } = request.query;
+
+      page = +page || 1;
+      limit = +limit || 5;
+      sort = sort || "dateStart ASC";
+      searchMovieId = searchMovieId || "";
+      searchLocation = searchLocation || "";
+
       const offset = page * limit - limit;
       const totalData = await scheduleModel.getCountSchedule();
       const totalPage = Math.ceil(totalData / limit);
@@ -17,7 +22,13 @@ module.exports = {
         limit,
         totalData,
       };
-      const result = await scheduleModel.getAllSchedule(limit, offset);
+      const result = await scheduleModel.getAllSchedule(
+        limit,
+        offset,
+        sort,
+        searchMovieId,
+        searchLocation
+      );
 
       return helperWrapper.response(
         response,
@@ -27,6 +38,7 @@ module.exports = {
         pageInfo
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
@@ -87,6 +99,13 @@ module.exports = {
         time,
         updatedAt: new Date(Date.now()),
       };
+
+      Object.keys(setData).forEach((value) => {
+        if (!setData[value]) {
+          delete setData[value];
+        }
+      });
+
       const result = await scheduleModel.updateSchedule(id, setData);
 
       return helperWrapper.response(
@@ -103,7 +122,7 @@ module.exports = {
   deleteSchedule: async (request, response) => {
     try {
       const { id } = request.params;
-      const result = await scheduleModel.deleteMovie(id);
+      const result = await scheduleModel.deleteSchedule(id);
 
       return helperWrapper.response(
         response,

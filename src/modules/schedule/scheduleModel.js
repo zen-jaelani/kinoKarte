@@ -16,19 +16,29 @@ module.exports = {
       );
     }),
 
-  getAllSchedule: (limit, offset) =>
+  getAllSchedule: (limit, offset, sort, searchMovieId, searchLocation) =>
     new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT * FROM schedule LIMIT ? OFFSET ?",
+      const query = connection.query(
+        `SELECT s.id, m.name, s.price,s.location
+        FROM schedule AS s 
+        JOIN movie AS m
+        ON s.movieId = m.id
+        WHERE movieId LIKE '%${searchMovieId}%' 
+        AND location LIKE '%${searchLocation}%' 
+        ORDER BY ${sort} 
+        LIMIT ? 
+        OFFSET ?`,
         [limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result);
           } else {
+            console.log(error);
             reject(new Error(error.sqlMessage));
           }
         }
       );
+      console.log(query.sql);
     }),
 
   getScheduleById: (id) =>
@@ -73,7 +83,7 @@ module.exports = {
         }
       );
     }),
-  deleteMovie: (id) =>
+  deleteSchedule: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
         "DELETE FROM schedule WHERE id = ?",
