@@ -33,4 +33,25 @@ module.exports = {
       );
       console.log(query.sql);
     }),
+  getBookingById: (id) =>
+    new Promise((resolve, reject) => {
+      const q = connection.query(
+        `
+      SELECT b.*, bs.seat, m.name,m.category
+      FROM booking b
+      JOIN bookingSeat bs on b.id = bs.bookingId
+      JOIN schedule sc on b.scheduleId = sc.id
+      JOIN movie m on sc.movieId = m.id 
+      WHERE b.id = ?`,
+        id,
+        (error, result) => {
+          if (!error) {
+            resolve(result);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+      console.log(q.sql);
+    }),
 };

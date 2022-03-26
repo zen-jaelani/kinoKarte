@@ -5,7 +5,7 @@ const Router = express.Router();
 const bookingController = require("./bookingController");
 
 Router.post("/", bookingController.createBooking);
-// Router.get("/", bookingController);
+Router.get("/id/:id", bookingController.getBookingById);
 // Router.get("/", bookingController);
 // Router.get("/", bookingController);
 // Router.patch("/", bookingController);
