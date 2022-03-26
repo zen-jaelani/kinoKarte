@@ -85,16 +85,12 @@ module.exports = {
     }),
   deleteSchedule: (id) =>
     new Promise((resolve, reject) => {
-      connection.query(
-        "DELETE FROM schedule WHERE id = ?",
-        id,
-        (error, result) => {
-          if (!error) {
-            resolve(result);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
+      connection.query("DELETE FROM schedule WHERE id = ?", id, (error) => {
+        if (!error) {
+          resolve(id);
+        } else {
+          reject(new Error(error.sqlMessage));
         }
-      );
+      });
     }),
 };
