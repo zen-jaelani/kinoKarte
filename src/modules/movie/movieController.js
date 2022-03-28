@@ -5,12 +5,13 @@ module.exports = {
   //
   getAllMovie: async (request, response) => {
     try {
-      let { page, limit, sort, searchName } = request.query;
+      let { page, limit, sort, searchName, searchRelease } = request.query;
 
       page = +page || 1;
       limit = +limit || 5;
-      sort = sort || "name ASC";
+      sort = sort || "id ASC";
       searchName = searchName || "";
+      searchRelease = searchRelease || "";
 
       const offset = page * limit - limit;
       const totalData = await movieModel.getCountMovie();
@@ -27,7 +28,8 @@ module.exports = {
         limit,
         offset,
         sort,
-        searchName
+        searchName,
+        searchRelease
       );
       return helperWrapper.response(
         response,

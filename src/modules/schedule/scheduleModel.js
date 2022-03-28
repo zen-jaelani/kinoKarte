@@ -44,7 +44,11 @@ module.exports = {
   getScheduleById: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM schedule WHERE id = ?",
+        `SELECT s.* , m.name,m.category,m.director,m.casts,m.releaseDate,m.duration,m.synopsis
+        FROM schedule AS s 
+        JOIN movie AS m
+        ON s.movieId = m.id
+        WHERE s.id = ?`,
         id,
         (error, result) => {
           if (!error) {
