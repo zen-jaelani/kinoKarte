@@ -5,37 +5,40 @@ module.exports = {
   //
   createBooking: async (request, response) => {
     try {
-      const data = request.body;
+      const {
+        scheduleId,
+        dateBooking,
+        timeBooking,
+        paymentMethod,
+        totalPayment,
+        seat,
+      } = request.body;
 
       const bookingData = {
-        scheduleId: data.scheduleId,
-        dateBooking: data.dateBooking,
-        timeBooking: data.timeBooking,
-        totalTicket: data.seat.length,
-        totalPayment: data.totalPayment,
-        paymentMethod: data.paymentMethod,
+        scheduleId,
+        dateBooking,
+        timeBooking,
+        totalTicket: seat.length,
+        totalPayment,
+        paymentMethod,
         statusPayment: "Success!",
       };
 
       const createBooking = await bookingModel.createBooking(bookingData);
 
-      const bookingSeatData = {
-        bookingId: createBooking.id,
-        seat: data.seat,
-      };
+      seat.map(async (x) => {
+        const bookingSeatData = {
+          bookingId: createBooking.id,
+          seat: x,
+        };
+        await bookingModel.createBookingSeat(bookingSeatData);
+      });
 
-      const createBookingSeat = await bookingModel.createBookingSeat(
-        bookingSeatData
-      );
-
-      const result = [createBooking, createBookingSeat];
-
-      return helperWrapper.response(
-        response,
-        200,
-        "create booking data!",
-        result
-      );
+      return helperWrapper.response(response, 200, "create booking data!", {
+        id: createBooking.id,
+        ...bookingData,
+        seat,
+      });
     } catch (error) {
       console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -46,7 +49,11 @@ module.exports = {
     try {
       const { id } = request.params;
       console.log(id);
-      const result = await bookingModel.getBookingById(id);
+      const getBooking = await bookingModel.getBookingById(id);
+      const getSeat = await bookingModel.getSeatById(id);
+
+      const result = { ...getBooking[0], ...getSeat[0] };
+      console.log(result);
       return helperWrapper.response(
         response,
         200,
@@ -62,9 +69,9 @@ module.exports = {
   getSeatBooking: async (request, response) => {
     try {
       let { scheduleId, dateBooking, timeBooking } = request.query;
-      scheduleId = scheduleId || "";
-      dateBooking = dateBooking || "";
-      timeBooking = timeBooking || "";
+      scheduleId = scheduleId || "1";
+      dateBooking = dateBooking || "2022-01-01";
+      timeBooking = timeBooking || "09:00";
 
       const result = await bookingModel.getSeatBooking(
         scheduleId,

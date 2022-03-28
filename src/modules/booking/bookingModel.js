@@ -10,6 +10,7 @@ module.exports = {
         (error, result) => {
           if (!error) {
             const newResult = { id: result.insertId, ...data };
+            console.log(newResult);
             resolve(newResult);
           } else {
             reject(new Error(error.sqlMessage));
@@ -40,12 +41,31 @@ module.exports = {
     new Promise((resolve, reject) => {
       const q = connection.query(
         `
-      SELECT b.*, bs.seat, m.name,m.category
+      SELECT b.*, m.name,m.category
       FROM booking b
-      JOIN bookingSeat bs on b.id = bs.bookingId
       JOIN schedule sc on b.scheduleId = sc.id
       JOIN movie m on sc.movieId = m.id 
       WHERE b.id = ?`,
+        id,
+        (error, result) => {
+          if (!error) {
+            resolve(result);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+      console.log(q.sql);
+    }),
+
+  getSeatById: (id) =>
+    new Promise((resolve, reject) => {
+      const q = connection.query(
+        `
+      SELECT GROUP_CONCAT(seat) seat
+      FROM bookingSeat
+      WHERE bookingId = ?
+      GROUP BY bookingId`,
         id,
         (error, result) => {
           if (!error) {
@@ -62,15 +82,21 @@ module.exports = {
     new Promise((resolve, reject) => {
       const query = connection.query(
         `
-      SELECT bs.seat
+      SELECT b.scheduleId, b.timeBooking,b.dateBooking, GROUP_CONCAT(bs.seat) seat
       FROM bookingSeat bs
       JOIN booking b on b.id = bs.bookingId
-      WHERE b.scheduleId LIKE ?
-      AND b.dateBooking LIKE ?
-      AND b.timeBooking LIKE ?`,
-        [`%${scheduleId}%`, `%${dateBooking}%`, `%${timeBooking}%`],
+      WHERE b.scheduleId = ?
+      AND b.dateBooking = ?
+      AND b.timeBooking = ?
+      GROUP BY bs.bookingId`,
+        [scheduleId, dateBooking, timeBooking],
         (error, result) => {
           if (!error) {
+            const newResult = result
+              .map((x) => x.seat)
+              .filter((value, index) => index === result.indexOf(value));
+            console.log(newResult);
+
             resolve(result);
           } else {
             reject(new Error(error));
@@ -82,30 +108,26 @@ module.exports = {
 
   getDashboard: (scheduleId, movieId, location) =>
     new Promise((resolve, reject) => {
-      const query = connection.query(
+      const q = connection.query(
         `
-      SELECT b.createdAt Month,totalPayment Total
+      SELECT MONTH(b.createdAt) Month, SUM(b.totalPayment) Total
       FROM schedule s
       JOIN booking b on b.scheduleId = s.id
       WHERE b.scheduleId LIKE ?
       AND s.movieId LIKE ?
-      AND s.location LIKE ?`,
+      AND s.location LIKE ?
+      GROUP BY MONTH(b.createdAt)`,
+
         [`%${scheduleId}%`, `%${movieId}%`, `%${location}%`],
         (error, result) => {
           if (!error) {
-            const newResult = result.map((value) => ({
-              Month: value.Month.toISOString().split("-")[1],
-              Total: value.Total,
-            }));
-            console.log(newResult);
-
-            resolve(newResult);
+            resolve(result);
           } else {
             reject(new Error(error));
           }
         }
       );
-      //   console.log(query.sql);
+      console.log(q.sql);
     }),
 
   updateStatus: (id) =>

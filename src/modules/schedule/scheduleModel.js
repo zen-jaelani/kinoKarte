@@ -19,7 +19,7 @@ module.exports = {
   getAllSchedule: (limit, offset, sort, searchMovieId, searchLocation) =>
     new Promise((resolve, reject) => {
       const query = connection.query(
-        `SELECT s.id, m.name, s.price,s.location
+        `SELECT s.* , m.name,m.category,m.director,m.casts,m.releaseDate,m.duration,m.synopsis
         FROM schedule AS s 
         JOIN movie AS m
         ON s.movieId = m.id
