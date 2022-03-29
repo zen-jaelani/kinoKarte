@@ -10,11 +10,14 @@ module.exports = {
       page = +page || 1;
       limit = +limit || 5;
       sort = sort || "dateStart ASC";
-      searchMovieId = searchMovieId || "";
+      searchMovieId = searchMovieId || 1;
       searchLocation = searchLocation || "";
 
       const offset = page * limit - limit;
-      const totalData = await scheduleModel.getCountSchedule();
+      const totalData = await scheduleModel.getCountSchedule(
+        searchMovieId,
+        searchLocation
+      );
       const totalPage = Math.ceil(totalData / limit);
       const pageInfo = {
         page,

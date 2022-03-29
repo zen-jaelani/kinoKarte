@@ -14,7 +14,10 @@ module.exports = {
       searchRelease = searchRelease || "";
 
       const offset = page * limit - limit;
-      const totalData = await movieModel.getCountMovie();
+      const totalData = await movieModel.getCountMovie(
+        searchName,
+        searchRelease
+      );
       const totalPage = Math.ceil(totalData / limit);
 
       const pageInfo = {
@@ -22,6 +25,7 @@ module.exports = {
         totalPage,
         limit,
         totalData,
+        allMovie: await movieModel.getCountMovie("", ""),
       };
 
       const result = await movieModel.getAllMovie(
