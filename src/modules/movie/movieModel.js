@@ -73,15 +73,15 @@ module.exports = {
       connection.query(
         "UPDATE movie SET ? WHERE id = ?",
         [data, id],
-        (error) => {
-          if (!error) {
+        (error, result) => {
+          if (!error && result.affectedRows) {
             const newResult = {
               id,
               ...data,
             };
             resolve(newResult);
           } else {
-            reject(new Error(error.sqlMessage));
+            reject(new Error(error));
           }
         }
       );
@@ -89,12 +89,16 @@ module.exports = {
 
   deleteMovie: (id) =>
     new Promise((resolve, reject) => {
-      connection.query("DELETE FROM movie WHERE id = ?", id, (error) => {
-        if (!error) {
-          resolve(id);
-        } else {
-          reject(new Error(error.sqlMessage));
+      connection.query(
+        "DELETE FROM movie WHERE id = ?",
+        id,
+        (error, result) => {
+          if (!error && result.affectedRows) {
+            resolve(id);
+          } else {
+            reject(new Error(error));
+          }
         }
-      });
+      );
     }),
 };

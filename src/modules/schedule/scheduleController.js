@@ -10,7 +10,7 @@ module.exports = {
       page = +page || 1;
       limit = +limit || 5;
       sort = sort || "dateStart ASC";
-      searchMovieId = searchMovieId || 1;
+      searchMovieId = searchMovieId || "movieId";
       searchLocation = searchLocation || "";
 
       const offset = page * limit - limit;
@@ -23,7 +23,8 @@ module.exports = {
         page,
         totalPage,
         limit,
-        totalData,
+        dataShown: totalData,
+        allSchedule: await scheduleModel.getCountSchedule("movieId", ""),
       };
       const result = await scheduleModel.getAllSchedule(
         limit,
@@ -118,7 +119,12 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(
+        response,
+        400,
+        "gagal update shedule",
+        null
+      );
     }
   },
 
@@ -134,7 +140,12 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(
+        response,
+        400,
+        "gagal delete schedule",
+        null
+      );
     }
   },
 };

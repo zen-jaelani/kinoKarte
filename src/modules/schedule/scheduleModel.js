@@ -7,9 +7,9 @@ module.exports = {
       const q = connection.query(
         `SELECT COUNT(*) AS total 
         FROM schedule
-        WHERE movieId = ? 
+        WHERE movieId = ${searchMovieId}
         AND location LIKE ?`,
-        [searchMovieId, `%${searchLocation}%`],
+        [`%${searchLocation}%`],
         (error, result) => {
           if (!error) {
             resolve(result[0].total);
@@ -18,7 +18,7 @@ module.exports = {
           }
         }
       );
-      console.log(q.sql);
+      // console.log(q.sql);
     }),
 
   getAllSchedule: (limit, offset, sort, searchMovieId, searchLocation) =>
@@ -28,7 +28,7 @@ module.exports = {
         FROM schedule AS s 
         JOIN movie AS m
         ON s.movieId = m.id
-        WHERE movieId LIKE '%${searchMovieId}%' 
+        WHERE movieId = ${searchMovieId} 
         AND location LIKE '%${searchLocation}%' 
         ORDER BY ${sort} 
         LIMIT ? 
@@ -83,23 +83,27 @@ module.exports = {
         "UPDATE schedule SET ? WHERE id = ?",
         [data, id],
         (error, result) => {
-          if (!error) {
+          if (!error && result.affectedRows) {
             const newResult = { id: result.insertId, ...data };
             resolve(newResult);
           } else {
-            reject(new Error(error.sqlMessage));
+            reject(new Error(error));
           }
         }
       );
     }),
   deleteSchedule: (id) =>
     new Promise((resolve, reject) => {
-      connection.query("DELETE FROM schedule WHERE id = ?", id, (error) => {
-        if (!error) {
-          resolve(id);
-        } else {
-          reject(new Error(error.sqlMessage));
+      connection.query(
+        "DELETE FROM schedule WHERE id = ?",
+        id,
+        (error, result) => {
+          if (!error && result.affectedRows) {
+            resolve(id);
+          } else {
+            reject(new Error(error));
+          }
         }
-      });
+      );
     }),
 };

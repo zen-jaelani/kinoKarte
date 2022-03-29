@@ -24,7 +24,7 @@ module.exports = {
         page,
         totalPage,
         limit,
-        totalData,
+        movieShown: totalData,
         allMovie: await movieModel.getCountMovie("", ""),
       };
 
@@ -144,7 +144,7 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(response, 400, "update gagal", null);
     }
   },
 
@@ -154,7 +154,7 @@ module.exports = {
       const result = await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, "data deleted !", result);
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(response, 400, `data id not found`, null);
     }
   },
 };
