@@ -6,13 +6,9 @@ const authModel = require("./authModel");
 module.exports = {
   register: async (request, response) => {
     try {
-      const { firstName, lastName, image, noTelp, email, password } =
-        request.body;
+      const { firstName, lastName, noTelp, email, password } = request.body;
 
-      // 1. encryp password
-      const hash = bcrypt.hashSync(password, 10);
-
-      // 2. cek email yang sudah ada
+      // cek email yang sudah ada
       const chekEmailExists = await authModel.checkEmail(email);
       if (chekEmailExists > 0) {
         return helperWrapper.response(
@@ -23,13 +19,16 @@ module.exports = {
         );
       }
 
+      const [, type] = request.file.mimetype.split("/");
+      const fileName = `${request.file.filename}.${type}`;
+
       const setData = {
         firstName,
         lastName,
-        image,
+        image: fileName,
         noTelp,
         email,
-        password: hash,
+        password: bcrypt.hashSync(password, 10),
         role: "user",
         status: "notActive",
       };
@@ -60,8 +59,7 @@ module.exports = {
       }
 
       // 2. jika password di cocokkan salah
-      console.log(password, checkUser[0].password);
-      if (bcrypt.compareSync(password, checkUser[0].password)) {
+      if (!bcrypt.compareSync(password, checkUser[0].password)) {
         return helperWrapper.response(response, 400, "Wrong Password", null);
       }
 
