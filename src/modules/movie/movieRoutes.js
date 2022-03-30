@@ -13,8 +13,24 @@ Router.get(
   middlewareRedis.getMovieByIdRedis,
   movieController.getMovieById
 );
-Router.post("/", middlewareUpload, movieController.createMovie);
-Router.patch("/:id", movieController.updateMovie);
-Router.delete("/:id", movieController.deleteMovie);
+Router.post(
+  "/",
+  middlewareAuth.authentication,
+  middlewareAuth.isAdmin,
+  middlewareUpload,
+  movieController.createMovie
+);
+Router.patch(
+  "/:id",
+  middlewareAuth.authentication,
+  middlewareAuth.isAdmin,
+  movieController.updateMovie
+);
+Router.delete(
+  "/:id",
+  middlewareAuth.authentication,
+  middlewareAuth.isAdmin,
+  movieController.deleteMovie
+);
 
 module.exports = Router;

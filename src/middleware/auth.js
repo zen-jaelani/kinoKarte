@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const jwt = require("jsonwebtoken");
 const helperWrapper = require("../helpers/wrapper");
 
@@ -10,8 +11,6 @@ module.exports = {
     }
 
     [, token] = token.split(" ");
-
-    console.log(token);
 
     jwt.verify(token, "RAHASIA", (error, result) => {
       if (error) {
@@ -30,6 +29,15 @@ module.exports = {
 
   isAdmin: (request, response, next) => {
     // proses untuk mengecek role apakah login role admin
-    console.log(request.decodeToken);
+
+    if (request.decodeToken.role !== "admin") {
+      return helperWrapper.response(
+        response,
+        400,
+        "Please login with admin account",
+        null
+      );
+    }
+    next();
   },
 };
