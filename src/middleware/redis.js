@@ -2,23 +2,113 @@ const redis = require("../config/redis");
 const helperWrapper = require("../helpers/wrapper");
 
 module.exports = {
-  // eslint-disable-next-line consistent-return
-  getMovieByIdRedis: async (request, response, next) => {
+  getMovieRedis: async (request, response, next) => {
     try {
-      const { id } = request.params;
-      let result = await redis.get(`getMovie:${id}`);
+      let result = await redis.get(`getMovie:${JSON.stringify(request.query)}`);
+
       if (result !== null) {
-        // console.log("data ada di dalam redis");
         result = JSON.parse(result);
         return helperWrapper.response(
           response,
           200,
-          "Success get data !",
+          "Success get data from redis!",
           result
         );
       }
-      // console.log("data tidak ada di dalam redis");
-      next();
+
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+
+  getMovieByIdRedis: async (request, response, next) => {
+    try {
+      const { id } = request.params;
+      let result = await redis.get(`getMovie:${id}`);
+
+      if (result !== null) {
+        result = JSON.parse(result);
+        return helperWrapper.response(
+          response,
+          200,
+          "Success get data from redis !",
+          result
+        );
+      }
+
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+
+  clearMovieRedis: async (request, response, next) => {
+    try {
+      const keys = await redis.keys("getMovie:*");
+      if (keys.length > 0) {
+        keys.forEach(async (element) => {
+          await redis.del(element);
+        });
+      }
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+
+  getScheduleRedis: async (request, response, next) => {
+    try {
+      let result = await redis.get(
+        `getSchedule:${JSON.stringify(request.query)}`
+      );
+
+      if (result !== null) {
+        result = JSON.parse(result);
+        return helperWrapper.response(
+          response,
+          200,
+          "Success get schedule from redis!",
+          result
+        );
+      }
+
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+
+  getScheduleByIdRedis: async (request, response, next) => {
+    try {
+      const { id } = request.params;
+      let result = await redis.get(`getSchedule:${id}`);
+
+      if (result !== null) {
+        result = JSON.parse(result);
+        return helperWrapper.response(
+          response,
+          200,
+          "Success get schedule from redis !",
+          result
+        );
+      }
+
+      return next();
+    } catch (error) {
+      return helperWrapper.response(response, 400, error.message, null);
+    }
+  },
+
+  clearScheduleRedis: async (request, response, next) => {
+    try {
+      const keys = await redis.keys("getSchedule:*");
+      if (keys.length > 0) {
+        keys.forEach(async (element) => {
+          await redis.del(element);
+        });
+      }
+      return next();
     } catch (error) {
       return helperWrapper.response(response, 400, error.message, null);
     }

@@ -36,6 +36,13 @@ module.exports = {
         searchName,
         searchRelease
       );
+
+      redis.setEx(
+        `getMovie:${JSON.stringify(request.query)}`,
+        3600,
+        JSON.stringify({ result, pageInfo })
+      );
+
       return helperWrapper.response(
         response,
         200,
