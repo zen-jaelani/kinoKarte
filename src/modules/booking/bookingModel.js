@@ -37,7 +37,7 @@ module.exports = {
       console.log(query.sql);
     }),
 
-  getBookingById: (id) =>
+  getBookingById: (by, id) =>
     new Promise((resolve, reject) => {
       const q = connection.query(
         `
@@ -45,7 +45,7 @@ module.exports = {
       FROM booking b
       JOIN schedule sc on b.scheduleId = sc.id
       JOIN movie m on sc.movieId = m.id 
-      WHERE b.id = ?`,
+      WHERE ${by} = ?`,
         id,
         (error, result) => {
           if (!error) {

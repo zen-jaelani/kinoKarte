@@ -6,6 +6,7 @@ module.exports = {
   createBooking: async (request, response) => {
     try {
       const {
+        userId,
         scheduleId,
         dateBooking,
         timeBooking,
@@ -15,6 +16,7 @@ module.exports = {
       } = request.body;
 
       const bookingData = {
+        userId,
         scheduleId,
         dateBooking,
         timeBooking,
@@ -45,11 +47,35 @@ module.exports = {
     }
   },
 
+  getBookingByUserId: async (request, response) => {
+    try {
+      const { id } = request.params;
+      const getBooking = await bookingModel.getBookingById("b.userId", id);
+
+      const result = await Promise.all(
+        getBooking.map(async (value) => {
+          const seat = await bookingModel.getSeatById(value.id);
+          const temp = { ...value, ...seat[0] };
+          return temp;
+        })
+      );
+
+      return helperWrapper.response(
+        response,
+        200,
+        "Booking by user id data!",
+        result
+      );
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
   getBookingById: async (request, response) => {
     try {
       const { id } = request.params;
-      console.log(id);
-      const getBooking = await bookingModel.getBookingById(id);
+      const getBooking = await bookingModel.getBookingById("b.id", id);
       const getSeat = await bookingModel.getSeatById(id);
 
       const result = { ...getBooking[0], ...getSeat[0] };
