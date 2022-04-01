@@ -30,6 +30,7 @@ Router.patch(
   "/:id",
   middlewareAuth.authentication,
   middlewareAuth.isAdmin,
+  middlewareUpload,
   middlewareRedis.clearMovieRedis,
   movieController.updateMovie
 );

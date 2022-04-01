@@ -9,6 +9,7 @@ const upload = multer({
   fileFilter: async (req, file, cb) => {
     console.log(req.headers["content-length"]);
     console.log(path.extname(file.originalname));
+
     const validExtension = [".png", ".jpg", ".jpeg"];
     if (!validExtension.includes(path.extname(file.originalname))) {
       cb(new Error(`only support ${validExtension}`), false);
@@ -23,29 +24,6 @@ const upload = multer({
   }),
 }).single("image");
 
-// console.log(upload);
-
-// JIKA menyimpan data di cloudinary
-// const storage = new CloudinaryStorage({
-//   cloudinary,
-//   params: {
-//     folder: "kinoKarte/movie",
-//   },
-// });
-
-// jika menyimpan data di dalam project backend
-// const storage = multer.diskStorage({
-//   destination(req, file, cb) {
-//     cb(null, "public/uploads/movie");
-//   },
-//   filename(req, file, cb) {
-//     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
-//   },
-// });
-
-// image itu nama field bukan jenis file
-// const upload = multer({ storage }).single("image");
-
 const handlingUpload = (request, response, next) => {
   upload(request, response, (error) => {
     if (error instanceof multer.MulterError) {
@@ -57,4 +35,5 @@ const handlingUpload = (request, response, next) => {
     return next();
   });
 };
+
 module.exports = handlingUpload;

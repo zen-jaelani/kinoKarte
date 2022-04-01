@@ -1,6 +1,7 @@
 const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const movieModel = require("./movieModel");
+const cloudinary = require("../../config/cloudinary");
 
 module.exports = {
   //
@@ -96,9 +97,13 @@ module.exports = {
         synopsis,
       } = request.body;
 
+      const [, type] = request.file.mimetype.split("/");
+      const fileName = `${request.file.filename}.${type}`;
+
       const setData = {
         name,
         category,
+        image: fileName,
         director,
         casts,
         releaseDate,
@@ -115,13 +120,20 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      console.log(error);
+      return helperWrapper.response(
+        response,
+        400,
+        "Bad Request, try reuploading the image",
+        null
+      );
     }
   },
 
   updateMovie: async (request, response) => {
     try {
       const { id } = request.params;
+
       const {
         name,
         category,
@@ -131,9 +143,25 @@ module.exports = {
         duration,
         synopsis,
       } = request.body;
+
+      const movie = await movieModel.getMovieById(id);
+      if (movie[0].image && request.file) {
+        const [imageName] = movie[0].image.split(".");
+        await cloudinary.uploader.destroy(imageName, (error, result) =>
+          console.log(error, result)
+        );
+      }
+
+      let fileName = null;
+      if (request.file) {
+        const [, type] = request.file.mimetype.split("/");
+        fileName = `${request.file.filename}.${type}`;
+      }
+
       const setData = {
         name,
         category,
+        image: fileName,
         director,
         casts,
         releaseDate,
@@ -156,13 +184,20 @@ module.exports = {
         result
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "update gagal", null);
+      console.log(error);
+      return helperWrapper.response(response, 400, "update movie failed", null);
     }
   },
 
   deleteMovie: async (request, response) => {
     try {
       const { id } = request.params;
+
+      const movie = await movieModel.getMovieById(id);
+      await cloudinary.uploader.destroy(movie[0].image, (error, result) =>
+        console.log(error, result)
+      );
+
       const result = await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, "data deleted !", result);
     } catch (error) {
