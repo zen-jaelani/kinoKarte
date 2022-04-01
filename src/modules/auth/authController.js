@@ -9,6 +9,7 @@ module.exports = {
       const { firstName, lastName, noTelp, email, password } = request.body;
 
       // cek email yang sudah ada
+      console.log(request.body);
       const chekEmailExists = await authModel.checkEmail(email);
       if (chekEmailExists > 0) {
         return helperWrapper.response(
@@ -19,13 +20,9 @@ module.exports = {
         );
       }
 
-      const [, type] = request.file.mimetype.split("/");
-      const fileName = `${request.file.filename}.${type}`;
-
       const setData = {
         firstName,
         lastName,
-        image: fileName,
         noTelp,
         email,
         password: bcrypt.hashSync(password, 10),
@@ -48,7 +45,6 @@ module.exports = {
       //   const setData = { email, password };
       const checkUser = await authModel.getUserByEmail(email);
 
-      // 1. jika email tidak ditemukan
       if (checkUser.lenght < 1) {
         return helperWrapper.response(
           response,
@@ -58,7 +54,6 @@ module.exports = {
         );
       }
 
-      // 2. jika password di cocokkan salah
       if (!bcrypt.compareSync(password, checkUser[0].password)) {
         return helperWrapper.response(response, 400, "Wrong Password", null);
       }
