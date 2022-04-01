@@ -13,6 +13,9 @@ const upload = multer({
     if (!validExtension.includes(path.extname(file.originalname))) {
       cb(new Error(`only support ${validExtension}`), false);
     }
+    if (req.headers["content-length"] > 1024 * 1024) {
+      cb(new Error(`file too big`), false);
+    }
     cb(null, true);
   },
   storage: new CloudinaryStorage({
@@ -34,4 +37,5 @@ const handlingUpload = (request, response, next) => {
     return next();
   });
 };
+
 module.exports = handlingUpload;
