@@ -52,4 +52,19 @@ module.exports = {
         }
       );
     }),
+
+  verifyEmail: (email) =>
+    new Promise((resolve, reject) => {
+      connection.query(
+        "UPDATE user SET status = 'active' WHERE email = ?",
+        email,
+        (error) => {
+          if (!error) {
+            resolve(email);
+          } else {
+            reject(error);
+          }
+        }
+      );
+    }),
 };

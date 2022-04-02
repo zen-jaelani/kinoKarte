@@ -40,4 +40,18 @@ module.exports = {
     }
     next();
   },
+
+  isActive: (request, response, next) => {
+    // proses untuk mengecek role apakah login role admin
+
+    if (request.decodeToken.status !== "active") {
+      return helperWrapper.response(
+        response,
+        400,
+        "Please activate your email first",
+        null
+      );
+    }
+    next();
+  },
 };
