@@ -63,8 +63,9 @@ module.exports = {
       const { id } = request.decodeToken;
 
       const user = await userModel.getUserById(id);
-      if (user[0].image && request.file) {
-        const [imageName] = user[0].image.split(".");
+      console.log(user.image);
+      if (user.image && request.file) {
+        const [imageName] = user.image.split(".");
         await cloudinary.uploader.destroy(imageName, (error, result) => {
           console.log(error, result);
         });
@@ -83,6 +84,7 @@ module.exports = {
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "update failed", null);
     }
   },

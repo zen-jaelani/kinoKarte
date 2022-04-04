@@ -132,14 +132,14 @@ module.exports = {
       return helperWrapper.response(
         response,
         200,
-        "update Schedule data!",
+        "update Schedule data! ",
         result
       );
     } catch (error) {
       return helperWrapper.response(
         response,
         400,
-        "gagal update shedule",
+        "update shedule failed! try checking the id",
         null
       );
     }
@@ -160,7 +160,7 @@ module.exports = {
       return helperWrapper.response(
         response,
         400,
-        "gagal delete schedule",
+        "delete schedule failed! try checking the id",
         null
       );
     }

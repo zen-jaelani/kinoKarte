@@ -146,6 +146,16 @@ module.exports = {
       } = request.body;
 
       const movie = await movieModel.getMovieById(id);
+
+      if (!movie.length) {
+        return helperWrapper.response(
+          response,
+          400,
+          `id: ${id} not found`,
+          null
+        );
+      }
+
       if (movie[0].image && request.file) {
         const [imageName] = movie[0].image.split(".");
         await cloudinary.uploader.destroy(imageName, (error, result) =>
@@ -195,14 +205,29 @@ module.exports = {
       const { id } = request.params;
 
       const movie = await movieModel.getMovieById(id);
-      await cloudinary.uploader.destroy(movie[0].image, (error, result) =>
-        console.log(error, result)
-      );
+
+      if (!movie.length) {
+        return helperWrapper.response(
+          response,
+          400,
+          `id: ${id} not found`,
+          null
+        );
+      }
+
+      if (movie[0].image) {
+        console.log("doleate");
+        const [imageName] = movie[0].image.split(".");
+        await cloudinary.uploader.destroy(imageName, (error, result) => {
+          console.log(error, result);
+        });
+      }
 
       const result = await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, "data deleted !", result);
     } catch (error) {
-      return helperWrapper.response(response, 400, `data id not found`, null);
+      console.log(error);
+      return helperWrapper.response(response, 400, `delete data failed`, null);
     }
   },
 };

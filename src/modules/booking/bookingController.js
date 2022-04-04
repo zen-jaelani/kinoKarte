@@ -143,7 +143,12 @@ module.exports = {
 
       return helperWrapper.response(response, 200, "Dashboard data!", result);
     } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
+      return helperWrapper.response(
+        response,
+        400,
+        "Update Status failed! try checking the id",
+        null
+      );
     }
   },
 };

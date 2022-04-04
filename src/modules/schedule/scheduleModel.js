@@ -4,7 +4,7 @@ module.exports = {
   //
   getCountSchedule: (searchMovieId, searchLocation) =>
     new Promise((resolve, reject) => {
-      const q = connection.query(
+      connection.query(
         `SELECT COUNT(*) AS total 
         FROM schedule
         WHERE movieId = ${searchMovieId}
@@ -18,7 +18,6 @@ module.exports = {
           }
         }
       );
-      // console.log(q.sql);
     }),
 
   getAllSchedule: (limit, offset, sort, searchMovieId, searchLocation) =>
@@ -84,7 +83,7 @@ module.exports = {
         [data, id],
         (error, result) => {
           if (!error && result.affectedRows) {
-            const newResult = { id: result.insertId, ...data };
+            const newResult = { id, ...data };
             resolve(newResult);
           } else {
             reject(new Error(error));

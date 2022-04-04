@@ -136,7 +136,7 @@ module.exports = {
         "UPDATE booking SET statusUsed = 'notActive' WHERE id = ?",
         id,
         (error, result) => {
-          if (!error) {
+          if (!error && result.affectedRows) {
             resolve(result);
           } else {
             reject(error);
