@@ -44,7 +44,17 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
    ```sh
    npm install
    ```
-4. Impor database yang ada di dalam local repo bernama kinokarte.sql kedalam mysql
-## Contact
-Jika ada yang perlu ditanyakan email saya di kinokarte.validation@zohomail.jp
+4. Import database yang ada di dalam local repo bernama kinokarte.sql kedalam mysql
+## Set up .env file
 
+```
+DBHOST: // Database host
+DBUSER: // Database User
+DBPASSWORD: // Database Password
+DATABASE: // Database name
+PORT: // Port used
+AUTHMAIL: // email used for sending verification
+AUTHPASS: // email password
+TOKENSECRET: // secret code used for jwt
+
+```
