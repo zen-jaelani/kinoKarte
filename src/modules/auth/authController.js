@@ -5,7 +5,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
 require("dotenv").config();
 
-function sendEmail(email) {
+function sendEmail(id, email) {
   const transporter = nodemailer.createTransport({
     host: "smtp.zoho.jp",
     secure: true,
@@ -16,16 +16,14 @@ function sendEmail(email) {
     },
   });
 
-  const token = jwt.sign({ email }, "SECRET", { expiresIn: "2h" });
-  const link = `http://localhost:3003/auth/verify/${token.trim()}`;
-  console.log(link);
+  const token = jwt.sign({ id }, process.env.TOKENSECRET, { expiresIn: "2h" });
+  const link = `http://localhost:3003/auth/verify/${token}`;
 
   const mailOption = {
     from: process.env.AUTHMAIL,
     to: email,
     subject: "email verification",
-    // prettier-ignore
-    html: "Copy link below to postman verify your email: <br> "+link, //eslint-disable-line
+    html: `Copy link below to postman: <br> ${link}`,
   };
 
   transporter.sendMail(mailOption, (error) => {
@@ -43,7 +41,6 @@ module.exports = {
       const { firstName, lastName, noTelp, email, password } = request.body;
 
       // cek email yang sudah ada
-      console.log(request.body);
       const chekEmailExists = await authModel.checkEmail(email);
       if (chekEmailExists > 0) {
         return helperWrapper.response(
@@ -63,10 +60,9 @@ module.exports = {
         role: "user",
         status: "notActive",
       };
-      console.log(setData);
       const result = await authModel.register(setData);
 
-      sendEmail(email);
+      sendEmail(result.id, email);
 
       return helperWrapper.response(response, 200, "account created!", result);
     } catch (error) {
@@ -98,7 +94,9 @@ module.exports = {
       const payload = checkUser[0];
       delete payload.password;
 
-      const token = jwt.sign({ ...payload }, "RAHASIA", { expiresIn: "24h" });
+      const token = jwt.sign({ ...payload }, process.env.TOKENSECRET, {
+        expiresIn: "24h",
+      });
 
       return helperWrapper.response(response, 200, "success login!", {
         id: payload.id,
@@ -112,14 +110,18 @@ module.exports = {
   verifyEmail: async (request, response) => {
     try {
       const { token } = request.params;
-      // eslint-disable-next-line consistent-return
-      const data = jwt.decode(token.trim(), "SECRET", (error) => {
-        if (error) {
-          return helperWrapper.response(response, 400, "token invalid", null);
+      const data = jwt.decode(
+        token.trim(),
+        process.env.TOKENSECRET,
+        // prettier-ignore
+        (error) => { //eslint-disable-line
+          if (error) {
+            return helperWrapper.response(response, 400, "token invalid", null);
+          }
         }
-      });
+      );
 
-      const result = await authModel.verifyEmail(data.email);
+      const result = await authModel.verifyEmail(data.id);
 
       return helperWrapper.response(response, 200, "account verified!", result);
     } catch (error) {

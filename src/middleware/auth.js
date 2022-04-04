@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const jwt = require("jsonwebtoken");
 const helperWrapper = require("../helpers/wrapper");
+require("dotenv").config();
 
 module.exports = {
   authentication: (request, response, next) => {
@@ -12,7 +13,7 @@ module.exports = {
 
     [, token] = token.split(" ");
 
-    jwt.verify(token, "RAHASIA", (error, result) => {
+    jwt.verify(token, process.env.TOKENSECRET, (error, result) => {
       if (error) {
         return helperWrapper.response(
           response,
@@ -42,9 +43,7 @@ module.exports = {
   },
 
   isActive: (request, response, next) => {
-    // proses untuk mengecek role apakah login role admin
-
-    if (request.decodeToken.status !== "active") {
+    if (request.body.userId !== "active") {
       return helperWrapper.response(
         response,
         400,

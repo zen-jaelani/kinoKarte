@@ -10,7 +10,9 @@ module.exports = {
         id,
         (error, result) => {
           if (!error) {
-            resolve(result);
+            const newResult = { ...result[0] };
+            delete newResult.password;
+            resolve(newResult);
           } else {
             reject(new Error(error.sqlMessage));
           }

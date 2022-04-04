@@ -8,7 +8,6 @@ module.exports = {
   getUserById: async (request, response) => {
     try {
       const { id } = request.params;
-      console.log(id);
       const result = await userModel.getUserById(id);
 
       if (result.length <= 0) {
@@ -26,14 +25,12 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
 
   updateProfile: async (request, response) => {
     try {
-      console.log(request.decodeToken);
       const { id } = request.decodeToken;
       const { firstName, lastName, noTelp } = request.body;
       const setData = {
@@ -66,7 +63,6 @@ module.exports = {
       const { id } = request.decodeToken;
 
       const user = await userModel.getUserById(id);
-      console.log(request.file);
       if (user[0].image && request.file) {
         const [imageName] = user[0].image.split(".");
         await cloudinary.uploader.destroy(imageName, (error, result) => {
@@ -80,7 +76,6 @@ module.exports = {
 
       const result = await userModel.updateImage(id, data);
 
-      console.log(result);
       return helperWrapper.response(
         response,
         200,
@@ -88,7 +83,6 @@ module.exports = {
         result
       );
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "update failed", null);
     }
   },
@@ -121,7 +115,6 @@ module.exports = {
       const result = await userModel.updatePassword(id, setData);
       return helperWrapper.response(response, 200, "password changed!", result);
     } catch (error) {
-      console.log(error);
       return helperWrapper.response(response, 400, "update failed", null);
     }
   },

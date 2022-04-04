@@ -4,25 +4,20 @@ module.exports = {
   //
   register: (data) =>
     new Promise((resolve, reject) => {
-      const q = connection.query(
-        "INSERT INTO user SET ?",
-        data,
-        (error, result) => {
-          if (!error) {
-            const newResult = { id: result.insertId, ...data };
-            // delete newResult.password;
-            resolve(newResult);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
+      connection.query("INSERT INTO user SET ?", data, (error, result) => {
+        if (!error) {
+          const newResult = { id: result.insertId, ...data };
+          delete newResult.password;
+          resolve(newResult);
+        } else {
+          reject(new Error(error.sqlMessage));
         }
-      );
-      console.log(q.sql);
+      });
     }),
 
   checkEmail: (data) =>
     new Promise((resolve, reject) => {
-      const q = connection.query(
+      connection.query(
         `SELECT COUNT(email) AS total 
         FROM user
         WHERE email = ? `,
@@ -35,7 +30,6 @@ module.exports = {
           }
         }
       );
-      console.log(q.sql);
     }),
 
   getUserByEmail: (email) =>
@@ -53,14 +47,14 @@ module.exports = {
       );
     }),
 
-  verifyEmail: (email) =>
+  verifyEmail: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE user SET status = 'active' WHERE email = ?",
-        email,
-        (error) => {
-          if (!error) {
-            resolve(email);
+        "UPDATE user SET status = 'active' WHERE id = ?",
+        id,
+        (error, result) => {
+          if (!error && result.affectedRows) {
+            resolve(id);
           } else {
             reject(error);
           }
