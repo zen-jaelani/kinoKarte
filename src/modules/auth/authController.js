@@ -75,10 +75,8 @@ module.exports = {
     try {
       const { email, password } = request.body;
 
-      //   const setData = { email, password };
       const checkUser = await authModel.getUserByEmail(email);
-
-      if (checkUser.lenght < 1) {
+      if (!checkUser[0]) {
         return helperWrapper.response(
           response,
           400,
