@@ -7,9 +7,9 @@ module.exports = {
       connection.query(
         `SELECT COUNT(*) AS total 
         FROM movie
-        WHERE name LIKE ? 
-        AND MONTH(releaseDate) LIKE ?`,
-        [`%${searchName}%`, `%${searchRelease}%`],
+        WHERE MONTH(releaseDate) = ${searchRelease} 
+        AND name LIKE ? `,
+        [`%${searchName}%`],
         (error, result) => {
           if (!error) {
             resolve(result[0].total);
@@ -26,7 +26,7 @@ module.exports = {
         `SELECT * 
         FROM movie 
         WHERE name LIKE '%${searchName}%' 
-        AND MONTH(releaseDate) LIKE '%${searchRelease}%'
+        AND MONTH(releaseDate) = ${searchRelease} 
         ORDER BY ${sort} 
         LIMIT ? 
         OFFSET ?`,

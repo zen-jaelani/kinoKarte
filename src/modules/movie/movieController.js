@@ -13,13 +13,14 @@ module.exports = {
       limit = +limit || 5;
       sort = sort || "id ASC";
       searchName = searchName || "";
-      searchRelease = searchRelease || "";
+      searchRelease = searchRelease || "MONTH(releaseDate)";
 
       const offset = page * limit - limit;
       const totalData = await movieModel.getCountMovie(
         searchName,
         searchRelease
       );
+
       const totalPage = Math.ceil(totalData / limit);
 
       const pageInfo = {
@@ -27,7 +28,7 @@ module.exports = {
         totalPage,
         limit,
         movieShown: totalData,
-        allMovie: await movieModel.getCountMovie("", ""),
+        allMovie: await movieModel.getCountMovie("", "MONTH(releaseDate)"),
       };
 
       const result = await movieModel.getAllMovie(
