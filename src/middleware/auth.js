@@ -43,7 +43,7 @@ module.exports = {
   },
 
   isActive: (request, response, next) => {
-    if (request.body.userId !== "active") {
+    if (request.decodeToken.status !== "active") {
       return helperWrapper.response(
         response,
         400,
