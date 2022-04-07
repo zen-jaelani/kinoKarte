@@ -1,10 +1,11 @@
 /* eslint-disable consistent-return */
 const jwt = require("jsonwebtoken");
+const redis = require("../config/redis");
 const helperWrapper = require("../helpers/wrapper");
 require("dotenv").config();
 
 module.exports = {
-  authentication: (request, response, next) => {
+  authentication: async (request, response, next) => {
     let token = request.headers.authorization;
 
     if (!token) {
@@ -12,6 +13,16 @@ module.exports = {
     }
 
     [, token] = token.split(" ");
+
+    const checkRedis = await redis.get(`accessToken:${token}`);
+    if (checkRedis) {
+      return helperWrapper.response(
+        response,
+        400,
+        "token invalid! please login again",
+        null
+      );
+    }
 
     jwt.verify(token, process.env.TOKENSECRET, (error, result) => {
       if (error) {
