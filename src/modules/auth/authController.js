@@ -1,13 +1,12 @@
 /* eslint-disable no-param-reassign */
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const fs = require("fs");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
 const { sendMail } = require("../../helpers/mail");
-const render = require("../../helpers/renderHtml");
 
 require("dotenv").config();
 
@@ -28,6 +27,7 @@ module.exports = {
       }
 
       const setData = {
+        id: uuidv4(),
         firstName,
         lastName,
         noTelp,
@@ -115,9 +115,10 @@ module.exports = {
         }
       );
 
+      // eslint-disable-next-line no-unused-vars
       const result = await authModel.verifyEmail(data.id);
 
-      response.sendFile(
+      return response.sendFile(
         path.resolve(`${__dirname}/../../templates/email/response.html`)
       );
 
@@ -128,6 +129,7 @@ module.exports = {
     }
   },
 
+  // eslint-disable-next-line consistent-return
   refresh: async (request, response) => {
     try {
       const { refreshToken } = request.body;
@@ -163,6 +165,7 @@ module.exports = {
             3600 * 48,
             refreshToken
           );
+
           return helperWrapper.response(response, 200, "token refresh!", {
             id: result.id,
             token,

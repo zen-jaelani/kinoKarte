@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
 
@@ -16,6 +17,7 @@ module.exports = {
       } = request.body;
 
       const bookingData = {
+        id: uuidv4(),
         userId,
         scheduleId,
         dateBooking,
@@ -27,7 +29,7 @@ module.exports = {
       };
 
       const createBooking = await bookingModel.createBooking(bookingData);
-
+      console.log(createBooking);
       seat.map(async (x) => {
         const bookingSeatData = {
           bookingId: createBooking.id,
