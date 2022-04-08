@@ -1,14 +1,15 @@
 # kinoKarte
+
 Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bioskop terdekat
 
 ## Getting Started
 
 ### Prerequisites
 
-* vsCode
-* nodejs
-* Webserver dan database manager software (e.g. xampp,lamp)
-* redis
+- vsCode
+- nodejs
+- Webserver dan database manager software (e.g. xampp,lamp)
+- redis
 
 ### Package depedencies
 
@@ -29,6 +30,8 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
 - `dotenv`[[here](https://www.npmjs.com/package/dotenv)]
 - `nodemailer`[[here](https://www.npmjs.com/package/nodemailer)]
 - `bcrypt` [[here](https://www.npmjs.com/package/bcrypt)]
+- `mustache` [[here](https://www.npmjs.com/package/mustache)]
+- `midtrans-client` [[here](https://www.npmjs.com/package/midtrans-client)]
 
 ### Installation
 
@@ -45,6 +48,7 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
    npm install
    ```
 4. Import database yang ada di dalam local repo bernama kinokarte.sql kedalam mysql
+
 ## Set up .env file
 
 ```
@@ -53,8 +57,21 @@ DBUSER: // Database User
 DBPASSWORD: // Database Password
 DATABASE: // Database name
 PORT: // Port used
+
 AUTHMAIL: // email used for sending verification
 AUTHPASS: // email password
+
 TOKENSECRET: // secret code used for jwt
 
+CLOUDINARY_NAME: // cloudinary cloud name
+CLOUDINARY_API_KEY: // cloudinary api key
+CLOUDINARY_API_SECRET: // cloudinary api secret
+
+MIDTRANS_PRODUCTION: // midtrans in production state (true/false)
+MIDTRANS_SERVER_KEY: // midtrans server key
+MIDTRANS_CLIENT_KEY: // midtrans client key
+
+REDIS_HOST: // Redis host
+REDIS_PORT: // Redis port
+REDIS_PASSWORD: // Redis password
 ```
