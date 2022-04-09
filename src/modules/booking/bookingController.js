@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
+const helperMidtrans = require("../../helpers/midtrans");
 
 module.exports = {
   //
@@ -25,7 +26,6 @@ module.exports = {
         totalTicket: seat.length,
         totalPayment,
         paymentMethod,
-        statusPayment: "Success!",
       };
 
       const createBooking = await bookingModel.createBooking(bookingData);
@@ -37,14 +37,37 @@ module.exports = {
         };
         await bookingModel.createBookingSeat(bookingSeatData);
       });
+      const setDataMidtrans = {
+        id: createBooking.id,
+        totalPayment,
+      };
+      const resultMidtrans = await helperMidtrans.post(setDataMidtrans);
 
       return helperWrapper.response(response, 200, "create booking data!", {
         id: createBooking.id,
         ...bookingData,
         seat,
+        redirectUrl: resultMidtrans.redirect_url,
       });
     } catch (error) {
       console.log(error);
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+
+  postMidtransNotification: async (request, response) => {
+    try {
+      console.log(request.body);
+      const result = await helperMidtrans.notif(request.body);
+      const orderId = result.order_id;
+      const transactionStatus = result.transaction_status;
+      const fraudStatus = result.fraud_status;
+
+      console.log(
+        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+      );
+    } catch (error) {
+      //   console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },

@@ -12,6 +12,10 @@ Router.post(
   bookingController.createBooking
 );
 Router.get(
+  "/midtrans-notification",
+  bookingController.postMidtransNotification
+);
+Router.get(
   "/id/:id",
   middlewareAuth.authentication,
   bookingController.getBookingById

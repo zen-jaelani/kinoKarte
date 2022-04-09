@@ -3,7 +3,6 @@ const express = require("express");
 const Router = express.Router();
 
 const authController = require("./authController");
-const render = require("../../helpers/renderHtml");
 
 Router.post("/register", authController.register);
 Router.post("/login", authController.login);
