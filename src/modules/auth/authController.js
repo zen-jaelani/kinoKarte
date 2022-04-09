@@ -47,7 +47,7 @@ module.exports = {
         to: email,
         subject: "Email Verification",
         template: "verification.html",
-        link: `http://localhost:3003/auth/verify/${token}`,
+        link: `${process.env.URL}/auth/verify/${token}`,
       };
 
       sendMail(setMail);
