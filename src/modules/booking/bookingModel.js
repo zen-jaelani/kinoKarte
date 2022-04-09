@@ -37,6 +37,25 @@ module.exports = {
       console.log(query.sql);
     }),
 
+  updatePaymentStatus: (id, data) =>
+    new Promise((resolve, reject) => {
+      connection.query(
+        "UPDATE booking SET ? WHERE id = ?",
+        [data, id],
+        (error, result) => {
+          if (!error && result.affectedRows) {
+            const newResult = {
+              id,
+              ...data,
+            };
+            resolve(newResult);
+          } else {
+            reject(error);
+          }
+        }
+      );
+    }),
+
   getBookingById: (by, id) =>
     new Promise((resolve, reject) => {
       const q = connection.query(
@@ -133,11 +152,11 @@ module.exports = {
   updateStatus: (id) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE booking SET statusUsed = 'notActive' WHERE id = ?",
+        "UPDATE booking SET statusUsed = 'notActive', updatedAt = CURRENT_DATE WHERE id = ?",
         id,
         (error, result) => {
           if (!error && result.affectedRows) {
-            resolve(result);
+            resolve(id);
           } else {
             reject(error);
           }

@@ -57,20 +57,34 @@ module.exports = {
 
   postMidtransNotification: async (request, response) => {
     try {
-      console.log(request.body);
       const result = await helperMidtrans.notif(request.body);
       const orderId = result.order_id;
-      const transactionStatus = result.transaction_status;
       const fraudStatus = result.fraud_status;
+      const statusCode = result.status_code;
+
+      const statusPayment = {
+        200: "Success",
+        201: "Pending",
+        202: "Failed",
+      };
+
+      const setData = {
+        paymentMethod: result.payment_type,
+        statusPayment: statusPayment[statusCode],
+      };
+
+      const updateResult = await bookingModel.updatePaymentStatus(
+        orderId,
+        setData
+      );
 
       return helperWrapper.response(
         response,
-        200,
+        statusCode,
         "Transaction notification received!",
         {
-          OrderID: orderId,
-          TransactionStatus: transactionStatus,
-          FraudStatus: fraudStatus,
+          ...updateResult,
+          fraudStatus,
         }
       );
     } catch (error) {
@@ -173,7 +187,7 @@ module.exports = {
       const { id } = request.params;
       const result = await bookingModel.updateStatus(id);
 
-      return helperWrapper.response(response, 200, "Dashboard data!", result);
+      return helperWrapper.response(response, 200, "updated status!", result);
     } catch (error) {
       return helperWrapper.response(
         response,
