@@ -11,7 +11,7 @@ Router.post(
   middlewareAuth.isActive,
   bookingController.createBooking
 );
-Router.get(
+Router.post(
   "/midtrans-notification",
   bookingController.postMidtransNotification
 );

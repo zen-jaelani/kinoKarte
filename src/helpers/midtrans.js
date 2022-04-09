@@ -1,8 +1,8 @@
 const midtransClient = require("midtrans-client");
-require("dotenv");
+require("dotenv").config();
 
 const snap = new midtransClient.Snap({
-  isProduction: Boolean(process.env.MIDTRANS_PRODUCTION),
+  isProduction: process.env.MIDTRANS_PRODUCTION === "true",
   serverKey: process.env.MIDTRANS_SERVER_KEY,
   clientKey: process.env.MIDTRANS_CLIENT_KEY,
 });
@@ -10,8 +10,11 @@ const snap = new midtransClient.Snap({
 module.exports = {
   post: (data) =>
     new Promise((resolve, reject) => {
-      console.log("POST MIDTRANS RUN");
-      console.log(process.env.midtransServerKey, process.env.midtransClientKey);
+      console.log(
+        process.env.MIDTRANS_SERVER_KEY,
+        process.env.MIDTRANS_CLIENT_KEY
+      );
+      console.log(Boolean(process.env.MIDTRANS_PRODUCTION));
 
       const parameter = {
         transaction_details: {
@@ -36,7 +39,6 @@ module.exports = {
 
   notif: (data) =>
     new Promise((resolve, reject) => {
-      console.log("NOTIF MIDTRANS RUN");
       snap.transaction
         .notification(data)
         .then((statusResponse) => {
