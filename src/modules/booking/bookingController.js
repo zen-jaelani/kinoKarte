@@ -63,11 +63,18 @@ module.exports = {
       const transactionStatus = result.transaction_status;
       const fraudStatus = result.fraud_status;
 
-      console.log(
-        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+      return helperWrapper.response(
+        response,
+        200,
+        "Transaction notification received!",
+        {
+          OrderID: orderId,
+          TransactionStatus: transactionStatus,
+          FraudStatus: fraudStatus,
+        }
       );
     } catch (error) {
-      //   console.log(error);
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
