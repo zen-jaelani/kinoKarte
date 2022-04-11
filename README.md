@@ -75,3 +75,7 @@ REDIS_HOST: // Redis host
 REDIS_PORT: // Redis port
 REDIS_PASSWORD: // Redis password
 ```
+
+## API Documentation
+
+https://documenter.getpostman.com/view/20137810/UVyysCuG
