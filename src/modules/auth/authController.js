@@ -119,13 +119,12 @@ module.exports = {
       const result = await authModel.verifyEmail(data.id);
 
       return response.sendFile(
-        path.resolve(`${__dirname}/../../templates/email/response.html`)
+        path.resolve(`${__dirname}/../../templates/email/successResponse.html`)
       );
-
-      // return helperWrapper.response(response, 200, "account verified!", result);
     } catch (error) {
-      console.log(error);
-      return helperWrapper.response(response, 400, "failed verify email", null);
+      return response.sendFile(
+        path.resolve(`${__dirname}/../../templates/email/failedResponse.html`)
+      );
     }
   },
 
