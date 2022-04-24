@@ -7,12 +7,7 @@ const middlewareAuth = require("../../middleware/auth");
 const middlewareUpload = require("../../middleware/uploadMovie");
 const middlewareRedis = require("../../middleware/redis");
 
-Router.get(
-  "/",
-  middlewareAuth.authentication,
-  middlewareRedis.getMovieRedis,
-  movieController.getAllMovie
-);
+Router.get("/", middlewareRedis.getMovieRedis, movieController.getAllMovie);
 Router.get(
   "/:id",
   middlewareRedis.getMovieByIdRedis,
