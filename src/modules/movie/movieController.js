@@ -8,7 +8,6 @@ module.exports = {
   getAllMovie: async (request, response) => {
     try {
       let { page, limit, sort, searchName, searchRelease } = request.query;
-
       page = +page || 1;
       limit = +limit || 5;
       sort = sort || "id ASC";
@@ -39,11 +38,16 @@ module.exports = {
         searchRelease
       );
 
+      if (!result.length) {
+        return helperWrapper.response(response, 404, "Not Found", null);
+      }
+
       redis.setEx(
         `getMovie:${JSON.stringify(request.query)}`,
         3600,
         JSON.stringify({ result, pageInfo })
       );
+      redis.flushAll();
 
       return helperWrapper.response(
         response,
@@ -98,8 +102,11 @@ module.exports = {
         synopsis,
       } = request.body;
 
-      const [, type] = request.file.mimetype.split("/");
-      const fileName = `${request.file.filename}.${type}`;
+      let fileName = null;
+      if (request.file) {
+        const [, type] = request.file.mimetype.split("/");
+        fileName = `${request.file.filename}.${type}`;
+      }
 
       const setData = {
         name,
