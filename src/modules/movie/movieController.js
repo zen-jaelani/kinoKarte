@@ -47,7 +47,6 @@ module.exports = {
         3600,
         JSON.stringify({ result, pageInfo })
       );
-      redis.flushAll();
 
       return helperWrapper.response(
         response,
