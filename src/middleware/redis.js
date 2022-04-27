@@ -4,15 +4,16 @@ const helperWrapper = require("../helpers/wrapper");
 module.exports = {
   getMovieRedis: async (request, response, next) => {
     try {
-      let result = await redis.get(`getMovie:${JSON.stringify(request.query)}`);
+      const data = await redis.get(`getMovie:${JSON.stringify(request.query)}`);
+      if (data !== null) {
+        const { result, pageInfo } = JSON.parse(data);
 
-      if (result !== null) {
-        result = JSON.parse(result);
         return helperWrapper.response(
           response,
           200,
           "Success get data from redis!",
-          result
+          result,
+          pageInfo
         );
       }
 
@@ -59,17 +60,18 @@ module.exports = {
 
   getScheduleRedis: async (request, response, next) => {
     try {
-      let result = await redis.get(
+      const data = await redis.get(
         `getSchedule:${JSON.stringify(request.query)}`
       );
 
-      if (result !== null) {
-        result = JSON.parse(result);
+      if (data !== null) {
+        const { result, pageInfo } = JSON.parse(data);
         return helperWrapper.response(
           response,
           200,
           "Success get schedule from redis!",
-          result
+          result,
+          pageInfo
         );
       }
 
