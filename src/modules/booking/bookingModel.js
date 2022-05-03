@@ -104,11 +104,10 @@ module.exports = {
       SELECT b.scheduleId, b.timeBooking,b.dateBooking, GROUP_CONCAT(bs.seat) seat
       FROM bookingSeat bs
       JOIN booking b on b.id = bs.bookingId
-      WHERE b.scheduleId = ?
-      AND b.dateBooking = ?
-      AND b.timeBooking = ?
+      WHERE b.scheduleId = ${scheduleId}
+      AND b.dateBooking = ${dateBooking}
+      AND b.timeBooking = ${timeBooking}
       GROUP BY bs.bookingId`,
-        [scheduleId, dateBooking, timeBooking],
         (error, result) => {
           if (!error) {
             const newResult = result

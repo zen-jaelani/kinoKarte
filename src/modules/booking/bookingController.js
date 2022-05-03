@@ -141,9 +141,9 @@ module.exports = {
   getSeatBooking: async (request, response) => {
     try {
       let { scheduleId, dateBooking, timeBooking } = request.query;
-      scheduleId = scheduleId || "1";
-      dateBooking = dateBooking || "2022-01-01";
-      timeBooking = timeBooking || "09:00";
+      scheduleId = scheduleId ? `'${scheduleId}'` : "b.scheduleId";
+      dateBooking = dateBooking ? `'${dateBooking}'` : "b.dateBooking";
+      timeBooking = timeBooking ? `'${timeBooking}'` : "b.timeBooking";
 
       const result = await bookingModel.getSeatBooking(
         scheduleId,
