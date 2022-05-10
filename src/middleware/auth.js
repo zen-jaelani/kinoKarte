@@ -9,7 +9,7 @@ module.exports = {
     let token = request.headers.authorization;
 
     if (!token) {
-      return helperWrapper.response(response, 400, "Please login first", null);
+      return helperWrapper.response(response, 403, "Please login first", null);
     }
 
     [, token] = token.split(" ");
@@ -18,7 +18,7 @@ module.exports = {
     if (checkRedis) {
       return helperWrapper.response(
         response,
-        400,
+        403,
         "token invalid! please login again",
         null
       );
@@ -26,12 +26,7 @@ module.exports = {
 
     jwt.verify(token, process.env.TOKENSECRET, (error, result) => {
       if (error) {
-        return helperWrapper.response(
-          response,
-          400,
-          "Please login first",
-          null
-        );
+        return helperWrapper.response(response, 403, error.message, null);
       }
       // data user login dari token yang sudah di decode
       request.decodeToken = result;
