@@ -60,7 +60,7 @@ module.exports = {
     new Promise((resolve, reject) => {
       const q = connection.query(
         `
-      SELECT b.*, m.name,m.category
+      SELECT b.*, m.name,m.category,sc.premiere
       FROM booking b
       JOIN schedule sc on b.scheduleId = sc.id
       JOIN movie m on sc.movieId = m.id 
@@ -131,12 +131,12 @@ module.exports = {
       SELECT MONTH(b.createdAt) Month, SUM(b.totalPayment) Total
       FROM schedule s
       JOIN booking b on b.scheduleId = s.id
-      WHERE b.scheduleId LIKE ?
-      AND s.movieId LIKE ?
+      WHERE b.scheduleId = ${scheduleId}
+      AND s.movieId = ${movieId}
       AND s.location LIKE ?
-      GROUP BY MONTH(b.createdAt)`,
+      GROUP BY MONTH(b.createdAt) ORDER BY Month ASC`,
 
-        [`%${scheduleId}%`, `%${movieId}%`, `%${location}%`],
+        [`%${location}%`],
         (error, result) => {
           if (!error) {
             resolve(result);
