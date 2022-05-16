@@ -164,13 +164,14 @@ module.exports = {
 
   getDashboard: async (request, response) => {
     try {
-      let { scheduleId, movieId, location } = request.query;
-      scheduleId = scheduleId ? `'${scheduleId}'` : "b.scheduleId";
+      let { premiere, movieId, location } = request.query;
+      //   scheduleId = scheduleId ? `'${scheduleId}'` : "b.scheduleId";
+      premiere = premiere || "";
       movieId = movieId ? `'${movieId}'` : "s.movieId";
       location = location || "";
 
       const result = await bookingModel.getDashboard(
-        scheduleId,
+        premiere,
         movieId,
         location
       );

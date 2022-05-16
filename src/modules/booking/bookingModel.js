@@ -124,14 +124,14 @@ module.exports = {
       console.log(query.sql);
     }),
 
-  getDashboard: (scheduleId, movieId, location) =>
+  getDashboard: (premiere, movieId, location) =>
     new Promise((resolve, reject) => {
       const q = connection.query(
         `
       SELECT MONTH(b.createdAt) Month, SUM(b.totalPayment) Total
       FROM schedule s
       JOIN booking b on b.scheduleId = s.id
-      WHERE b.scheduleId = ${scheduleId}
+      WHERE s.premiere LIKE '%${premiere}%'
       AND s.movieId = ${movieId}
       AND s.location LIKE ?
       GROUP BY MONTH(b.createdAt) ORDER BY Month ASC`,
