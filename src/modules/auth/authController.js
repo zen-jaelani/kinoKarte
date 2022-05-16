@@ -93,6 +93,7 @@ module.exports = {
 
       return helperWrapper.response(response, 200, "success login!", {
         id: payload.id,
+        role: payload.role,
         token,
         refreshToken,
       });
@@ -134,6 +135,7 @@ module.exports = {
       const { refreshToken } = request.body;
 
       const checkToken = await redis.get(`refreshToken:${refreshToken}`);
+
       if (checkToken) {
         return helperWrapper.response(
           response,
@@ -142,15 +144,19 @@ module.exports = {
           null
         );
       }
-      console.log(checkToken);
 
       jwt.verify(
         refreshToken,
         process.env.TOKENSECRET,
         async (error, result) => {
-          console.log(result);
+          if (error) {
+            console.log(error);
+            return helperWrapper.response(response, 403, error, null);
+          }
+
           delete result.iat;
           delete result.exp;
+
           const token = jwt.sign(result, process.env.TOKENSECRET, {
             expiresIn: "1h",
           });
@@ -168,12 +174,17 @@ module.exports = {
           return helperWrapper.response(response, 200, "token refresh!", {
             id: result.id,
             token,
-            newRefreshToken,
+            refreshToken: newRefreshToken,
           });
         }
       );
     } catch (error) {
-      return helperWrapper.response(response, 400, "failed verify email", null);
+      return helperWrapper.response(
+        response,
+        403,
+        "failed refresh token",
+        null
+      );
     }
   },
 
