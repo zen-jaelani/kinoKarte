@@ -202,4 +202,56 @@ module.exports = {
       return helperWrapper.response(response, 400, "logout failed", null);
     }
   },
+
+  generateOTP: async (request, response) => {
+    try {
+      const { email } = request.body;
+      const OTP = Math.floor(Math.random() * 899999 + 100000);
+
+      const chekEmailExists = await authModel.checkEmail(email);
+      if (chekEmailExists <= 0) {
+        return helperWrapper.response(
+          response,
+          400,
+          "email doesn't exists",
+          null
+        );
+      }
+
+      redis.setEx(`OTP:${email}`, 300, OTP);
+
+      const setMail = {
+        to: email,
+        subject: "Email Verification",
+        template: "reset.html",
+        OTP,
+      };
+
+      sendMail(setMail);
+
+      return helperWrapper.response(
+        response,
+        200,
+        "OTP Send to your email",
+        null
+      );
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "Can't generate OTP", null);
+    }
+  },
+
+  verifyOTP: async (request, response) => {
+    try {
+      const { email, OTP } = request.body;
+      const existing = await redis.get(`OTP:${email}`);
+      if (OTP == existing) {
+        return helperWrapper.response(response, 200, "OTP Verified", null);
+      }
+      return helperWrapper.response(response, 400, "OTP invaid", null);
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "Can't verify OTP", null);
+    }
+  },
 };
