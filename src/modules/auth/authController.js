@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
+const userModel = require("../user/userModel");
 const { sendMail } = require("../../helpers/mail");
 
 require("dotenv").config();
@@ -252,6 +253,37 @@ module.exports = {
     } catch (error) {
       console.log(error);
       return helperWrapper.response(response, 400, "Can't verify OTP", null);
+    }
+  },
+
+  setPassword: async (request, response) => {
+    try {
+      const { email, newPassword, confirmPassword } = request.body;
+
+      if (newPassword !== confirmPassword) {
+        return helperWrapper.response(
+          response,
+          400,
+          "password doesn't match",
+          null
+        );
+      }
+
+      const setData = {
+        password: bcrypt.hashSync(newPassword, 10),
+        updatedAt: new Date(Date.now()),
+      };
+
+      Object.keys(setData).forEach((value) => {
+        if (!setData[value]) {
+          delete setData[value];
+        }
+      });
+
+      const result = await userModel.updatePassword("email", email, setData);
+      return helperWrapper.response(response, 200, "password changed!", result);
+    } catch (error) {
+      return helperWrapper.response(response, 400, "update failed", null);
     }
   },
 };

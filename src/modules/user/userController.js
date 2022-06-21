@@ -114,7 +114,7 @@ module.exports = {
         }
       });
 
-      const result = await userModel.updatePassword(id, setData);
+      const result = await userModel.updatePassword("id", id, setData);
       return helperWrapper.response(response, 200, "password changed!", result);
     } catch (error) {
       return helperWrapper.response(response, 400, "update failed", null);

@@ -11,5 +11,6 @@ Router.post("/refresh", authController.refresh);
 Router.post("/logout", authController.logout);
 Router.post("/generateOTP", authController.generateOTP);
 Router.post("/verifyOTP", authController.verifyOTP);
+Router.post("/setPassword", authController.setPassword);
 
 module.exports = Router;
