@@ -1,6 +1,6 @@
 # kinoKarte
 
-Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bioskop terdekat
+The backend for [Project kinoTickitz](https://github.com/zen-jaelani/kinoTickitz)
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
 
 - vsCode
 - nodejs
-- Webserver dan database manager software (e.g. xampp,lamp)
+- Webserver & database manager software (e.g. xampp,lamp)
 - redis
 
 ### Package depedencies
@@ -39,7 +39,7 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
    ```sh
    git clone git@github.com:Qxtlp/kinoKarte.git
    ```
-2. Buka repository
+2. Open folder
    ```sh
    cd kinoKarte
    ```
@@ -47,7 +47,7 @@ Sebuah aplikasi yang dapat digunakan untuk melakukan pemesanan tiket film di bio
    ```sh
    npm install
    ```
-4. Import database yang ada di dalam local repo bernama kinokarte.sql kedalam mysql
+4. Import database
 
 ## Set up .env file
 
