@@ -1,6 +1,6 @@
 # kinoKarte
 
-The backend for [Project kinoTickitz](https://github.com/zen-jaelani/kinoTickitz)
+Backend for [Project kinoTickitz](https://github.com/zen-jaelani/kinoTickitz)
 
 ## Getting Started
 
