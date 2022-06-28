@@ -19,6 +19,13 @@ Router.patch(
   userController.updateImage
 );
 
+Router.delete(
+  "/image",
+  middlewareAuth.authentication,
+  middlewareUpload,
+  userController.updateImage
+);
+
 Router.patch(
   "/password",
   middlewareAuth.authentication,

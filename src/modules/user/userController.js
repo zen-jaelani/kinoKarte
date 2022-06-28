@@ -89,6 +89,32 @@ module.exports = {
     }
   },
 
+  deleteImage: async (request, response) => {
+    try {
+      const { id } = request.decodeToken;
+
+      const user = await userModel.getUserById(id);
+      if (user.image) {
+        const [imageName] = user.image.split(".");
+        await cloudinary.uploader.destroy(imageName, (error, result) => {
+          console.log(error, result);
+        });
+      }
+
+      const result = await userModel.updateImage(id, { image: null });
+
+      return helperWrapper.response(
+        response,
+        200,
+        "Success update data !",
+        result
+      );
+    } catch (error) {
+      console.log(error);
+      return helperWrapper.response(response, 400, "update failed", null);
+    }
+  },
+
   updatePassword: async (request, response) => {
     try {
       const { id } = request.decodeToken;
