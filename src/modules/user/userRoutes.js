@@ -22,7 +22,7 @@ Router.patch(
 Router.delete(
   "/image",
   middlewareAuth.authentication,
-  userController.updateImage
+  userController.deleteImage
 );
 
 Router.patch(
